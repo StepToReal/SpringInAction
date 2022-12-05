@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import tacos.Ingredient;
 import tacos.Ingredient.Type;
+import tacos.Order;
 import tacos.Taco;
 import tacos.data.IngredientRepository;
+import tacos.data.TacoRepository;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -22,13 +22,17 @@ import java.util.stream.Collectors;
 @Slf4j
 @Controller
 @RequestMapping("/design")
+@SessionAttributes("order") // session 에서 해당 객체를 유지 - 세션이 계속 보존되면서 다수의 요청에 걸쳐 사용 가능.
 public class DesignTacoController {
 
     private final IngredientRepository ingredientRepository;
 
+    private final TacoRepository tacoRepo;
+
     @Autowired
-    public DesignTacoController(IngredientRepository ingredientRepository) {
+    public DesignTacoController(IngredientRepository ingredientRepository, TacoRepository tacoRepo) {
         this.ingredientRepository = ingredientRepository;
+        this.tacoRepo = tacoRepo;
     }
 
     @GetMapping
@@ -53,13 +57,24 @@ public class DesignTacoController {
                 .collect(Collectors.toList());
     }
 
+    @ModelAttribute(name = "order") // 아래 객체가 order란 이름으로 model에 생성되도록 하는 annotation
+    public Order order() {
+        return new Order();
+    }
+
+    @ModelAttribute(name = "taco")
+    public Taco taco() {
+        return new Taco();
+    }
+
     @PostMapping
-    public String processDesign(@Valid Taco design, Errors errors) {
+    public String processDesign(@Valid Taco design, Errors errors, @ModelAttribute Order order) {
         if (errors.hasErrors()) {
             return "design";
         }
 
-        log.info("Processing design: " + design);
+        Taco saved = tacoRepo.save(design);
+        order.addDesign(saved);
 
         return "redirect:/orders/current";
     }

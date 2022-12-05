@@ -8,7 +8,7 @@ create table if not exists Ingredient (
 create table if not exists Taco (
     id identity,
     name varchar(50) not null,
-    createAt timestamp not null
+    createdAt timestamp not null
 );
 
 create table if not exists Taco_Ingredients (
@@ -21,7 +21,7 @@ alter table Taco_Ingredients add foreign key (ingredient) references Ingredient(
 
 create table if not exists Taco_Order (
     id identity,
-    delivaryName varchar(50) not null,
+    deliveryName varchar(50) not null,
     deliveryStreet varchar(50) not null,
     deliveryCity varchar(50) not null,
     deliveryState varchar(2) not null,
@@ -29,7 +29,7 @@ create table if not exists Taco_Order (
     ccNumber varchar(16) not null,
     ccExpiration varchar(5) not null,
     ccCVV varchar(3) not null,
-    placeAt timestamp not null
+    placedAt timestamp not null
 );
 
 create table if not exists Taco_Order_Tacos (

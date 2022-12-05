@@ -28,7 +28,6 @@ public class JdbcTacoRepository implements TacoRepository {
         long tacoId = saveTacoInfo(taco);
         taco.setId(tacoId);
 
-        //todo - 일단 에러만 없도록 수정, taco에 ingredient 넣으려먼 processDesign 수정 해야함.
         for (Ingredient ingredient : taco.getIngredients()) {
             saveIngredientToTaco(ingredient, tacoId);
         }
@@ -39,7 +38,7 @@ public class JdbcTacoRepository implements TacoRepository {
         taco.setCreatedAt(new Date());
 
         PreparedStatementCreator psc = new PreparedStatementCreatorFactory(
-                "insert into Taco (name, createAt) values (?, ?)",
+                "insert into Taco (name, createdAt) values (?, ?)",
                 Types.VARCHAR, Types.TIMESTAMP
         ).newPreparedStatementCreator(
                 Arrays.asList(
