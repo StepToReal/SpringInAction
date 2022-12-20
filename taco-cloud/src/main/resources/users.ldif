@@ -1,59 +1,59 @@
-dn: dc=tacocloud,dc=org
-objectclass: top
-objectclass: domain
-objectclass: extensibleObject
+dn: dc=tacocloud,dc=com
+objectClass: top
+objectClass: domain
+objectClass: extensibleObject
 dc: tacocloud
 
 dn: ou=groups,dc=tacocloud,dc=com
-objectclass: top
-objectclass: organizationalUnit
+objectClass: top
+objectClass: organizationalUnit
 ou: groups
 
 dn: ou=people,dc=tacocloud,dc=com
-objectclass: top
-objectclass: organizationalUnit
+objectClass: top
+objectClass: organizationalUnit
 ou: people
 
 dn: uid=admin,ou=people,dc=tacocloud,dc=com
-objectclass: top
-objectclass: person
-objectclass: organizationalPerson
-objectclass: inetOrgPerson
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
 cn: CS OH
 sn: OH
 uid: admin
 userPassword: admin1
 
 dn: uid=user1,ou=people,dc=tacocloud,dc=com
-objectclass: top
-objectclass: person
-objectclass: organizationalPerson
-objectclass: inetOrgPerson
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
 cn: GD Hong
 sn: Hong
 uid: user1
 userPassword: password1
 
 dn: uid=user2,ou=people,dc=tacocloud,dc=com
-objectclass: top
-objectclass: person
-objectclass: organizationalPerson
-objectclass: inetOrgPerson
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
 cn: MS Park
 sn: Park
 uid: user2
 userPassword: password2
 
 dn: cn=user,ou=groups,dc=tacocloud,dc=com
-objectclass: top
-objectclass: groupOfNames
+objectClass: top
+objectClass: groupOfNames
 cn: user
 member: uid=user1,ou=people,dc=tacocloud,dc=com
 member: uid=user2,ou=people,dc=tacocloud,dc=com
 member: uid=admin,ou=people,dc=tacocloud,dc=com
 
 dn: cn=admin,ou=groups,dc=tacocloud,dc=com
-objectclass: top
-objectclass: groupOfNames
+objectClass: top
+objectClass: groupOfNames
 cn: admin
 member: uid=admin,ou=people,dc=tacocloud,dc=com

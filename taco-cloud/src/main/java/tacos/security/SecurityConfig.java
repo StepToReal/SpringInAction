@@ -4,29 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.ldap.core.support.BaseLdapPathContextSource;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.ldap.EmbeddedLdapServerContextSourceFactoryBean;
-import org.springframework.security.config.ldap.LdapBindAuthenticationManagerFactory;
-import org.springframework.security.config.ldap.LdapPasswordComparisonAuthenticationManagerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
-import org.springframework.security.ldap.authentication.LdapAuthenticator;
-import org.springframework.security.ldap.server.UnboundIdContainer;
-import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
-import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     @Autowired
     DataSource dataSource;
@@ -37,7 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/design", "/orders")
                 .access("hasRole('ROLE_USER')")
@@ -51,6 +40,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic();
 
         return http.build();
+    }
+
+    @Autowired
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .ldapAuthentication()
+                .userSearchBase("ou=people")
+                .userSearchFilter("(uid={0})")
+                .groupSearchBase("ou=groups")
+                .groupSearchFilter("(member={0})")
+                .contextSource()
+                    .url("ldap://localhost:8389/dc=tacocloud,dc=com")
+                .and()
+                .passwordCompare()
+                    .passwordEncoder(new BCryptPasswordEncoder())
+                    .passwordAttribute("userPasscode");
     }
 
 //    @Autowired
@@ -97,37 +102,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
          */
 //    }
 
-    @Bean
-    public EmbeddedLdapServerContextSourceFactoryBean contextSourceFactoryBean() {
-        EmbeddedLdapServerContextSourceFactoryBean contextSourceFactoryBean =
-                EmbeddedLdapServerContextSourceFactoryBean.fromEmbeddedLdapServer();
-        contextSourceFactoryBean.setPort(0);
-        return contextSourceFactoryBean;
-    }
-
-    @Bean
-    UnboundIdContainer ldapContainer() {
-        return new UnboundIdContainer("dc=tacocloud,dc=com", "classpath:users.ldif");
-    }
-
-    @Bean
-    LdapAuthoritiesPopulator authorities(BaseLdapPathContextSource contextSource) {
-        String groupSearchBase = "ou=groups";
-        DefaultLdapAuthoritiesPopulator authorities = new DefaultLdapAuthoritiesPopulator(contextSource, groupSearchBase);
-        authorities.setGroupSearchFilter("member={0}");
-
-        return authorities;
-    }
-
-    @Bean
-    AuthenticationManager ldapAuthenticationManager(BaseLdapPathContextSource contextSource, LdapAuthoritiesPopulator authorities) {
-        LdapPasswordComparisonAuthenticationManagerFactory factory =
-                new LdapPasswordComparisonAuthenticationManagerFactory(contextSource, new BCryptPasswordEncoder());
-
-        factory.setUserSearchBase("ou=people");
-        factory.setUserSearchFilter("uid={0}");
-        factory.setLdapAuthoritiesPopulator(authorities);
-
-        return factory.createAuthenticationManager();
-    }
 }
