@@ -9,5 +9,11 @@
 <body>
   <h1>Welcome to...taco</h1>
   <img th:src="@{/images/TacoCloud.png}" alt="" src=""/>  <!-- 이미지의 기본 경로는 /resources/static 이다. -->
+
+    <form method="post" th:action="@{/logout}" id="logoutForm">
+        <input type="submit" value="Logout"/>
+    </form>
+
+    <a th:href="@{/design}" id="design">Design a taco</a>
 </body>
 </html>

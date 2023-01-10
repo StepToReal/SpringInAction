@@ -1,62 +1,69 @@
 package tacos.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-
-import javax.sql.DataSource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    DataSource dataSource;
+    private UserDetailsService userDetailsService;
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations()));
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/design", "/orders")
                 .access("hasRole('ROLE_USER')")
-                .antMatchers("/", "/**")
+                .antMatchers("/", "/**", "/h2-console/**")
                 .access("permitAll")
                 .and()
-                .formLogin().permitAll()
+                .formLogin()
+                .loginPage("/login")
                 .and()
-                .logout().permitAll()
+                .logout()
+                .logoutSuccessUrl("/")
                 .and()
-                .httpBasic();
+                .csrf();
 
-        return http.build();
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
     }
 
-    @Autowired
+    @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .ldapAuthentication()
-                .userSearchBase("ou=people")
-                .userSearchFilter("(uid={0})")
-                .groupSearchBase("ou=groups")
-                .groupSearchFilter("(member={0})")
-                .contextSource()
-                    .url("ldap://localhost:8389/dc=tacocloud,dc=com")
-                .and()
-                .passwordCompare()
-                    .passwordEncoder(new BCryptPasswordEncoder())
-                    .passwordAttribute("userPasscode");
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(encoder());
     }
+
+//    @Autowired
+//    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+////        auth
+////                .ldapAuthentication()
+////                .userSearchBase("ou=people")
+////                .userSearchFilter("(uid={0})")
+////                .groupSearchBase("ou=groups")
+////                .groupSearchFilter("(member={0})")
+////                .contextSource()
+////                    .url("ldap://localhost:8389/dc=tacocloud,dc=com")
+////                .and()
+////                .passwordCompare()
+////                    .passwordEncoder(new BCryptPasswordEncoder())
+////                    .passwordAttribute("userPasscode");
+//    }
 
 //    @Autowired
 //    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -94,7 +101,7 @@ public class SecurityConfig {
                 .groupSearchFilter("(member={0})")
                 .contextSource()
                 .root("dc=tacocloud,dc=com")
-                .ldif("classpath:users.ldif")
+                .ldif("classpath:users.ldif_old")
                 .and()
                 .passwordCompare()
                 .passwordEncoder(new BCryptPasswordEncoder())
