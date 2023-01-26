@@ -1,20 +1,8 @@
-taco:
-  orders:
-    page-size: 10
-
-logging:
-  level:
-    tacos: debug
-
----
 spring:
   datasource:
     url: jdbc:mysql://localhost/tacocloud
     username: tacouser
     password: tacopassword
-  config:
-    activate:
-      on-profile: prod
 logging:
   level:
     tacos: warn
