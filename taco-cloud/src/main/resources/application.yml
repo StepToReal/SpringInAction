@@ -6,6 +6,11 @@ logging:
   level:
     tacos: debug
 
+spring:
+  data:
+    rest:
+      base-path: /rest
+
 ---
 spring:
   datasource:
@@ -15,6 +20,9 @@ spring:
   config:
     activate:
       on-profile: prod
+  data:
+    rest:
+      base-path: /rest
 logging:
   level:
     tacos: warn
