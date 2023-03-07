@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,11 +13,13 @@ import tacos.Order;
 import tacos.Taco;
 import tacos.data.OrderRepository;
 import tacos.data.TacoRepository;
+import tacos.web.DesignTacoController;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(path = "/design", produces = "application/json")
@@ -31,30 +34,22 @@ public class RestDesignTacoController {
     }
 
     @GetMapping("/recent")
-    public CollectionModel<TacoResource> recentTacos() {
+    public CollectionModel<EntityModel<Taco>> recentTacos() {
         PageRequest page = PageRequest.of(0, 12, Sort.by("createdAt").descending());
 
         List<Taco> tacos = tacoRepo.findAll(page).getContent();
-        CollectionModel<TacoResource> tacoResources = new TacoResourceAssembler().toCollectionModel(tacos);
+        CollectionModel<EntityModel<Taco>> collectionModel = CollectionModel.wrap(tacos);
 
-        tacoResources.add(
-                linkTo(methodOn(RestDesignTacoController.class).recentTacos())
-                        .withRel("recents")
-        );
+//        collectionModel.add(
+//                linkTo(RestDesignTacoController.class)
+//                        .slash("recent")
+//                        .withRel("recents"));
 
-        return tacoResources;
+        // 위와 동일한 작업이나 method를 지정하여 하드코딩을 제거할 수 있음.
+        collectionModel.add(linkTo(methodOn(RestDesignTacoController.class).recentTacos())
+                .withRel("recents"));
 
-//        CollectionModel<EntityModel<Taco>> recentResources = CollectionModel.wrap(tacos);
-//
-////        recentResources.add(Link.of("http://localhost:8080/design/recent", "recents"));
-//
-////        recentResources.add(linkTo(DesignTacoController.class)
-////                .slash("recent")
-////                .withRel("recents"));
-//
-//        recentResources.add(linkTo(methodOn(RestDesignTacoController.class).recentTacos()).withRel("recents"));
-//
-//        return recentResources;
+        return collectionModel;
     }
 
     @GetMapping("/{id}")
