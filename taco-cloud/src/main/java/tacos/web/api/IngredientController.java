@@ -1,6 +1,5 @@
 package tacos.web.api;
 
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +43,13 @@ public class IngredientController {
         } else {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
+    }
+
+    @PostMapping()
+    public ResponseEntity<Ingredient> postIngredient(@RequestBody Ingredient ingredient) {
+        Ingredient savedIngredient = repo.save(ingredient);
+
+        return new ResponseEntity<>(savedIngredient, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

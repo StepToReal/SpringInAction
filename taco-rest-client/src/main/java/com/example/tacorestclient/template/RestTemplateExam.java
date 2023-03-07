@@ -3,8 +3,6 @@ package com.example.tacorestclient.template;
 import com.example.tacorestclient.model.Ingredient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -16,7 +14,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping(path = "/rest-template")
-public class ResourceRest {
+public class RestTemplateExam {
 
     RestTemplate rest = new RestTemplate();
 
@@ -62,5 +60,33 @@ public class ResourceRest {
     @DeleteMapping("/ingredient/{id}")
     public void deleteIngredient(@PathVariable String id) {
         rest.delete("http://localhost:8080/ingredients/{id}", id);
+    }
+
+    @PostMapping("/ingredient")
+    public Ingredient createIngredient() {
+        Ingredient ingredient = new Ingredient("TEST", "Test Ingre", Ingredient.Type.WRAP);
+
+        return rest.postForObject("http://localhost:8080/ingredients", ingredient, Ingredient.class);
+    }
+
+    @PostMapping("/ingredient/location")
+    public URI createIngredientGetUri() {
+        Ingredient ingredient = new Ingredient("TEST", "Test Ingre", Ingredient.Type.WRAP);
+        URI result = rest.postForLocation("http://localhost:8080/ingredients", ingredient);
+        System.out.println(result);
+
+        return result;
+    }
+
+    @PostMapping("/ingredient/entity")
+    public Ingredient createIngredientGetEntity() {
+        Ingredient ingredient = new Ingredient("TEST", "Test Ingre", Ingredient.Type.WRAP);
+        ResponseEntity<Ingredient> responseEntity = rest.postForEntity("http://localhost:8080/ingredients",
+                ingredient,
+                Ingredient.class);
+
+        log.info("New resource created at " + responseEntity.getHeaders().getLocation());
+
+        return responseEntity.getBody();
     }
 }
