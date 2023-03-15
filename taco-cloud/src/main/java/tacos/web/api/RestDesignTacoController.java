@@ -34,11 +34,14 @@ public class RestDesignTacoController {
     }
 
     @GetMapping("/recent")
-    public CollectionModel<EntityModel<Taco>> recentTacos() {
+    public CollectionModel<TacoResource> recentTacos() {
         PageRequest page = PageRequest.of(0, 12, Sort.by("createdAt").descending());
 
         List<Taco> tacos = tacoRepo.findAll(page).getContent();
-        CollectionModel<EntityModel<Taco>> collectionModel = CollectionModel.wrap(tacos);
+
+        CollectionModel<TacoResource> collectionModel = new TacoResourceAssembler().toCollectionModel(tacos);
+
+//        CollectionModel<EntityModel<Taco>> collectionModel = CollectionModel.wrap(tacos);
 
 //        collectionModel.add(
 //                linkTo(RestDesignTacoController.class)
