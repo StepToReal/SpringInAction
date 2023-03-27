@@ -9,7 +9,7 @@ logging:
 spring:
   data:
     rest:
-      base-path: /rest
+      base-path: /api
 
 ---
 spring:
