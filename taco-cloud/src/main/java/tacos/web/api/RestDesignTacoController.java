@@ -55,63 +55,63 @@ public class RestDesignTacoController {
         return collectionModel;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Taco> tacoById(@PathVariable("id") Long id) {
-        Optional<Taco> optTaco = tacoRepo.findById(id);
-        if (optTaco.isPresent()) {
-            return new ResponseEntity<>(optTaco.get(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-    }
-
-    @PostMapping(consumes = "application/json")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Taco postTaco(@RequestBody Taco taco) {
-        return tacoRepo.save(taco);
-    }
-
-    @PutMapping("/{orderId}")
-    public Order putOrder(@RequestBody Order order) {
-        return orderRepo.save(order);
-    }
-
-    @PatchMapping(value = "/{orderId}", consumes = "applicaiton/json")
-    public Order patchOrder(@PathVariable("orderId") Long orderId, @RequestBody Order patch) {
-        Order order = orderRepo.findById(orderId).get();
-
-        if (patch.getDeliveryName() != null) {
-            order.setDeliveryName(patch.getDeliveryName());
-        }
-        if (patch.getDeliveryStreet() != null) {
-            order.setDeliveryStreet(patch.getDeliveryStreet());
-        }
-        if (patch.getDeliveryCity() != null) {
-            order.setDeliveryCity(patch.getDeliveryCity());
-        }
-        if (patch.getDeliveryState() != null) {
-            order.setDeliveryState(patch.getDeliveryState());
-        }
-        if (patch.getDeliveryZip() != null) {
-            order.setDeliveryZip(patch.getDeliveryZip());
-        }
-        if (patch.getCcNumber() != null) {
-            order.setCcNumber(patch.getCcNumber());
-        }
-        if (patch.getCcExpiration() != null) {
-            order.setCcExpiration(patch.getCcExpiration());
-        }
-        if (patch.getCcCVV() != null) {
-            order.setCcCVV(patch.getCcCVV());
-        }
-
-        return orderRepo.save(order);
-    }
-
-    @DeleteMapping("/{orderId}")
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void deleteOrder(@PathVariable("orderId") Long orderId) {
-        try {
-            orderRepo.deleteById(orderId);
-        } catch (EmptyResultDataAccessException e) {}
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<Taco> tacoById(@PathVariable("id") Long id) {
+//        Optional<Taco> optTaco = tacoRepo.findById(id);
+//        if (optTaco.isPresent()) {
+//            return new ResponseEntity<>(optTaco.get(), HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+//    }
+//
+//    @PostMapping(consumes = "application/json")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public Taco postTaco(@RequestBody Taco taco) {
+//        return tacoRepo.save(taco);
+//    }
+//
+//    @PutMapping("/{orderId}")
+//    public Order putOrder(@RequestBody Order order) {
+//        return orderRepo.save(order);
+//    }
+//
+//    @PatchMapping(value = "/{orderId}", consumes = "applicaiton/json")
+//    public Order patchOrder(@PathVariable("orderId") Long orderId, @RequestBody Order patch) {
+//        Order order = orderRepo.findById(orderId).get();
+//
+//        if (patch.getDeliveryName() != null) {
+//            order.setDeliveryName(patch.getDeliveryName());
+//        }
+//        if (patch.getDeliveryStreet() != null) {
+//            order.setDeliveryStreet(patch.getDeliveryStreet());
+//        }
+//        if (patch.getDeliveryCity() != null) {
+//            order.setDeliveryCity(patch.getDeliveryCity());
+//        }
+//        if (patch.getDeliveryState() != null) {
+//            order.setDeliveryState(patch.getDeliveryState());
+//        }
+//        if (patch.getDeliveryZip() != null) {
+//            order.setDeliveryZip(patch.getDeliveryZip());
+//        }
+//        if (patch.getCcNumber() != null) {
+//            order.setCcNumber(patch.getCcNumber());
+//        }
+//        if (patch.getCcExpiration() != null) {
+//            order.setCcExpiration(patch.getCcExpiration());
+//        }
+//        if (patch.getCcCVV() != null) {
+//            order.setCcCVV(patch.getCcCVV());
+//        }
+//
+//        return orderRepo.save(order);
+//    }
+//
+//    @DeleteMapping("/{orderId}")
+//    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+//    public void deleteOrder(@PathVariable("orderId") Long orderId) {
+//        try {
+//            orderRepo.deleteById(orderId);
+//        } catch (EmptyResultDataAccessException e) {}
+//    }
 }
