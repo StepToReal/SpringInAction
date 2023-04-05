@@ -1,4 +1,4 @@
-package tacos.kitchen.messaging.jms;
+package tacos.jms.kitchen;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;

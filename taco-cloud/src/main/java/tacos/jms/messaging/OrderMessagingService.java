@@ -1,4 +1,4 @@
-package tacos.messaging;
+package tacos.jms.messaging;
 
 import tacos.Order;
 

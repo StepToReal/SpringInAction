@@ -1,4 +1,4 @@
-package tacos.kitchen.messaging.jms.listener;
+package tacos.jms.kitchen.listener;
 
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;

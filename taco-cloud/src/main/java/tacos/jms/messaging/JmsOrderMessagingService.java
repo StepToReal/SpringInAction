@@ -1,17 +1,12 @@
-package tacos.messaging;
+package tacos.jms.messaging;
 
-import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.stereotype.Service;
 import tacos.Order;
 
 import javax.jms.Destination;
 import javax.jms.Message;
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Service
@@ -55,22 +50,5 @@ public class JmsOrderMessagingService implements OrderMessagingService{
                     message.setStringProperty("X_ORDER_SOURCE", "WEB");
                     return message;
                 });
-    }
-
-    @Bean
-    public Destination orderQueue() {
-        return new ActiveMQQueue("tacocloud.order.queue");
-    }
-
-    @Bean
-    public MappingJackson2MessageConverter messageConverter() {
-        MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
-        messageConverter.setTypeIdPropertyName("_typeId");
-
-        Map<String, Class<?>> typeIdMappings = new HashMap<>();
-        typeIdMappings.put("order", Order.class);
-        messageConverter.setTypeIdMappings(typeIdMappings);
-
-        return messageConverter;
     }
 }
