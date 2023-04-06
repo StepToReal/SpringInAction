@@ -18,6 +18,9 @@ spring:
     broker-url: tcp://localhost:61616
     user: admin
     password: admin
+    embedded:
+      enabled: true
+      queues: tacocloud.order.queue
   rabbitmq:
     template:
       exchange: tacocloud.orders
