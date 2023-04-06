@@ -18,6 +18,10 @@ spring:
     broker-url: tcp://localhost:61616
     user: admin
     password: admin
+  rabbitmq:
+    template:
+      exchange: tacocloud.orders
+      routing-key: kitchens.central
 
 ---
 spring:

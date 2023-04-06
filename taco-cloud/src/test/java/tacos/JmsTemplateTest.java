@@ -3,7 +3,9 @@ package tacos;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import tacos.jms.kitchen.JmsOrderReceiver;
 import tacos.jms.kitchen.OrderReceiver;
+import tacos.jms.messaging.JmsOrderMessagingService;
 import tacos.jms.messaging.OrderMessagingService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JmsTemplateTest {
 
     @Autowired
-    OrderMessagingService orderMessagingService;
+    JmsOrderMessagingService orderMessagingService;
     @Autowired
-    OrderReceiver receiver;
+    JmsOrderReceiver receiver;
 
     @Test
     public void messageSendReceiveTest() throws Exception {

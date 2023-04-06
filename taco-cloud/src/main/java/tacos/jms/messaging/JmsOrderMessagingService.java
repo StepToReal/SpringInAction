@@ -10,7 +10,7 @@ import javax.jms.Message;
 
 
 @Service
-public class JmsOrderMessagingService implements OrderMessagingService{
+public class JmsOrderMessagingService{
     private JmsTemplate jms;
     private Destination orderQueue;
 
@@ -20,8 +20,7 @@ public class JmsOrderMessagingService implements OrderMessagingService{
         this.orderQueue = orderQueue;
     }
 
-    @Override
-    public void sendOrder(Order order) {
+    public void sendOrder_(Order order) {
         jms.send(orderQueue, session -> session.createObjectMessage(order));
         //send에 도착지를 지정하지 않으면 spring.jms.template.default-destination 에 설정된 경로로 메시지가 전송 됨
         //첫 인자에 Destination 넣으면 해당 경로로 메시지 전송
@@ -30,7 +29,7 @@ public class JmsOrderMessagingService implements OrderMessagingService{
         //위 처럼 도착지 정보를 문자열로 설정도 가능하다
     }
 
-    public void sendOrder2(Order order) {
+    public void sendOrder(Order order) {
         jms.convertAndSend("tacocloud.order.queue", order);
         //그냥 send와 다르게 객체만 넣으면 자동으로 Message 객체로 변환되어 전송, 도착지 생략 시 기본 도착지로 전송
     }

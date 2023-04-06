@@ -10,7 +10,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 
 @Component
-public class JmsOrderReceiver implements OrderReceiver {
+public class JmsOrderReceiver {
     private JmsTemplate jms;
     private MessageConverter converter;
 

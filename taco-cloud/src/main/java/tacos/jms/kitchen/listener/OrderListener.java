@@ -6,8 +6,8 @@ import tacos.Order;
 
 @Component
 public class OrderListener {
-    @JmsListener(destination = "tacocloud.order.queue")
-    public Order receiveOrder(Order order) {
-        return order;
-    }
+//    @JmsListener(destination = "tacocloud.order.queue")
+//    public Order receiveOrder(Order order) {
+//        return order;
+//    }
 }
