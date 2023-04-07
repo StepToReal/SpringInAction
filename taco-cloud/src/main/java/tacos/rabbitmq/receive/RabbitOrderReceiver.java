@@ -17,7 +17,7 @@ public class RabbitOrderReceiver {
     }
 
     public Order receivOrder() {
-        Message message = rabbit.receive("tacocloud.orders");
+        Message message = rabbit.receive("queue");
         return message != null ? (Order) converter.fromMessage(message) : null;
     }
 }
