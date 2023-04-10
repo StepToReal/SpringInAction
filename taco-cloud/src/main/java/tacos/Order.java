@@ -1,6 +1,7 @@
 package tacos;
 
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.validator.constraints.CreditCardNumber;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "Taco_Order")
+@ToString
 public class Order implements Serializable {
 
     private static final long serialVersionUID = 1L;

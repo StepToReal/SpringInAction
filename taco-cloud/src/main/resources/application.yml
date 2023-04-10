@@ -25,6 +25,9 @@ spring:
     template:
       exchange: tacocloud.orders
       routing-key: kitchens.central
+  kafka:
+    producer:
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
 
 ---
 spring:
