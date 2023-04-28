@@ -5,12 +5,11 @@ import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class ReactOperationTests {
+public class ReactiveCreateTests {
 
     @Test
     public void createAFlux_just() {
