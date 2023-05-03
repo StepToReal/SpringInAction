@@ -2,6 +2,7 @@ package taco.react.tacoreact;
 
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
@@ -72,6 +73,19 @@ public class ReactiveCreateTests {
                 .expectNext(2L)
                 .expectNext(3L)
                 .expectNext(4L)
+                .verifyComplete();
+    }
+
+    @Test
+    public void blockTest() {
+        Mono<String> mono = Mono.just("test");
+        String s = mono.block();
+        System.out.println(s);
+
+        mono.subscribe(System.out::println);
+
+        StepVerifier.create(mono)
+                .expectNext("test")
                 .verifyComplete();
     }
 }
