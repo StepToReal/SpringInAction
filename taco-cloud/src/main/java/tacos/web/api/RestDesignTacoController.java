@@ -9,6 +9,8 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import tacos.Order;
 import tacos.Taco;
 import tacos.data.OrderRepository;
@@ -26,33 +28,49 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @CrossOrigin(origins = "*")
 public class RestDesignTacoController {
     private TacoRepository tacoRepo;
-    private OrderRepository orderRepo;
+//    private OrderRepository orderRepo;
 
-    public RestDesignTacoController(TacoRepository tacoRepo, OrderRepository orderRepo) {
+    public RestDesignTacoController(TacoRepository tacoRepo) {
         this.tacoRepo = tacoRepo;
-        this.orderRepo = orderRepo;
+//        this.orderRepo = orderRepo;
     }
 
-    @GetMapping("/recent")
-    public CollectionModel<TacoResource> recentTacos() {
-        PageRequest page = PageRequest.of(0, 12, Sort.by("createdAt").descending());
+//    @GetMapping("/recent")
+//    public CollectionModel<TacoResource> recentTacos() {
+//        PageRequest page = PageRequest.of(0, 12, Sort.by("createdAt").descending());
+//
+//        List<Taco> tacos = tacoRepo.findAll(page).getContent();
+//
+//        CollectionModel<TacoResource> collectionModel = new TacoResourceAssembler().toCollectionModel(tacos);
+//
+////        CollectionModel<EntityModel<Taco>> collectionModel = CollectionModel.wrap(tacos);
+//
+////        collectionModel.add(
+////                linkTo(RestDesignTacoController.class)
+////                        .slash("recent")
+////                        .withRel("recents"));
+//
+//        // 위와 동일한 작업이나 method를 지정하여 하드코딩을 제거할 수 있음.
+//        collectionModel.add(linkTo(methodOn(RestDesignTacoController.class).recentTacos())
+//                .withRel("recents"));
+//
+//        return collectionModel;
+//    }
 
-        List<Taco> tacos = tacoRepo.findAll(page).getContent();
+    @GetMapping("/react-recent")
+    public Flux<Taco> reactRecentTacos() {
+        return tacoRepo.findAll().take(12);
+    }
 
-        CollectionModel<TacoResource> collectionModel = new TacoResourceAssembler().toCollectionModel(tacos);
+    @GetMapping("/{id}")
+    public Mono<Taco> tacoById(@PathVariable("id") Long id) {
+        return tacoRepo.findById(id);
+    }
 
-//        CollectionModel<EntityModel<Taco>> collectionModel = CollectionModel.wrap(tacos);
-
-//        collectionModel.add(
-//                linkTo(RestDesignTacoController.class)
-//                        .slash("recent")
-//                        .withRel("recents"));
-
-        // 위와 동일한 작업이나 method를 지정하여 하드코딩을 제거할 수 있음.
-        collectionModel.add(linkTo(methodOn(RestDesignTacoController.class).recentTacos())
-                .withRel("recents"));
-
-        return collectionModel;
+    @PostMapping(consumes = "application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<Taco> postTaco(@RequestBody Mono<Taco> tacoMono) {
+        return tacoRepo.saveAll(tacoMono).next();
     }
 
 //    @GetMapping("/{id}")
