@@ -2,13 +2,14 @@ package tacos;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import tacos.data.TacoRepository;
 import tacos.web.api.RestDesignTacoController;
 
-import java.util.UUID;
-
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
@@ -31,7 +32,7 @@ public class RestDesignTacoControllerTest {
         WebTestClient testClient = WebTestClient.bindToController(
                 new RestDesignTacoController(tacoRepo)).build();
 
-        testClient.get().uri("/design/react-recent2")
+        testClient.get().uri("/design/react-recent")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -44,8 +45,35 @@ public class RestDesignTacoControllerTest {
     private Taco testTaco(Long number) {
         Taco taco = new Taco();
         taco.setId(number);
+
+        if (number == null) {
+            taco.setId(10L);
+        }
+
         taco.setName("Taco " + number);
 
         return taco;
+    }
+
+    @Test
+    public void shouldSaveATaco() {
+        TacoRepository tacoRepo = Mockito.mock(TacoRepository.class);
+        Mono<Taco> unsavedTacoMono = Mono.just(testTaco(null));
+        Taco savedTaco = testTaco(null);
+        savedTaco.setId(1L);
+        Mono<Taco> savedTacoMono = Mono.just(savedTaco);
+
+        when(tacoRepo.save(any())).thenReturn(savedTacoMono);
+
+        WebTestClient testClient = WebTestClient.bindToController(new RestDesignTacoController(tacoRepo)).build();
+
+        testClient.post()
+                .uri("/design")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(unsavedTacoMono, Taco.class)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody(Taco.class)
+                .isEqualTo(savedTaco);
     }
 }

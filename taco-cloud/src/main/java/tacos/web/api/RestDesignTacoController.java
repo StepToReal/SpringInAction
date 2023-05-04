@@ -69,8 +69,8 @@ public class RestDesignTacoController {
 
     @PostMapping(consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<Taco> postTaco(@RequestBody Mono<Taco> tacoMono) {
-        return tacoRepo.saveAll(tacoMono).next();
+    public Mono<Taco> postTaco(@RequestBody Taco taco) {
+        return tacoRepo.save(taco);
     }
 
 //    @GetMapping("/{id}")
