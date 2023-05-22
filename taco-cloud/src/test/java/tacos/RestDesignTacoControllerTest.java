@@ -2,6 +2,8 @@ package tacos;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
@@ -9,11 +11,19 @@ import reactor.core.publisher.Mono;
 import tacos.data.TacoRepository;
 import tacos.web.api.RestDesignTacoController;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class RestDesignTacoControllerTest {
+
+    @Autowired
+    private WebTestClient testClient;
 
     @Test
     public void shouldReturnRecentTacos() {
@@ -52,6 +62,12 @@ public class RestDesignTacoControllerTest {
 
         taco.setName("Taco " + number);
 
+        List<Ingredient> ingredients = new ArrayList<>();
+        ingredients.add(new Ingredient("INGA", "Ingredient A", Ingredient.Type.WRAP));
+        ingredients.add(new Ingredient("INGB", "INgredient B", Ingredient.Type.PROTEIN));
+
+        taco.setIngredients(ingredients);
+
         return taco;
     }
 
@@ -75,5 +91,16 @@ public class RestDesignTacoControllerTest {
                 .expectStatus().isCreated()
                 .expectBody(Taco.class)
                 .isEqualTo(savedTaco);
+    }
+
+    @Test
+    public void shouldReturnRecentTacos_new() throws IOException {
+        testClient.get().uri("design/react-recent")
+                .accept(MediaType.APPLICATION_JSON).exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$[?(@.id == 'TACO1')].name").isEqualTo("Carnivore")
+                .jsonPath("$[?(@.id == 'TACO2')].name").isEqualTo("Bovine Bounty")
+                .jsonPath("$[?(@.id == 'TACO3')].name").isEqualTo("Veg-Out");
     }
 }
